@@ -29,18 +29,17 @@ if __name__ == "__main__":
     text = re.sub(r"[^\w\s\-]", " ", text)
     text = re.sub(r"\_", r"", text)
 
-    # Updating the lexicon
-    lex.update(text)
-
     # Splitting the normalized input into words
     words = text.lower().split()
 
-    # Predict the next word using a maximum of NUM_WORDS words.
+    # Predict the next word based on the user's input.
     if len(words) > 0:
-        prediction = predict(words[-1], data)
+        prediction = predict(words, data)
         # Print the 3 predicted options
         for i, pred in enumerate(prediction):
-            print(f"{i + 1}. {pred}")
+            print(f"{i + 1}. {pred[0]}")
+        # Updating the lexicon
+        lex.update(text)
         # Saving the updated lexicon
         with open("dataset.json", "w", encoding="UTF-8") as file:
             json.dump(lex.lexicon, fp=file, indent=4)

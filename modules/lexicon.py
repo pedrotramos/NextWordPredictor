@@ -1,4 +1,6 @@
 import re
+import collections
+from nltk.tokenize import sent_tokenize
 
 
 class Lexicon:
@@ -14,115 +16,215 @@ class Lexicon:
         """
         self.lexicon = data
 
-    def populate(self, dataset_path: str) -> None:
+    def populate(self, input_path: str) -> None:
         """
         Use a dataset to populate the lexicon.
 
         Args:
-            dataset_path (str): path to the dataset file.
+            dataset_path (str): path to the input text file.
         """
-        with open(dataset_path, "r", encoding="UTF-8") as dataset:
-            text = dataset.read().lower()
+        with open(input_path, "r", encoding="UTF-8") as file:
+            text = file.read().lower()
 
-        # Clean input text.
-        text = re.sub(r"\s\-\s|\-\-+", " ", text)
-        text = re.sub(r"[^\w\s\-]", " ", text)
-        text = re.sub(r"\_", r"", text)
+        # Split the text into a list of sentences.
+        sentences = sent_tokenize(text)
 
-        # Split the text into a list of words.
-        words = text.split()
-
-        # Generate the lexicon based on the input dataset.
-        for i in range(len(words) - 1):
-            self.generate(words[i], words[i + 1])
+        # Generate the lexicon based on the input text.
+        self.generate(sentences)
         return
 
-    def generate(self, currentWord: str, nextWord: str) -> None:
+    def generate(self, sentences: list) -> None:
         """
         Add item to the lexicon.
 
         Args:
-            currentWord (str): Input word.
-            nextWord (str): Output word.
+            sentences (list): List of sentences in the input text.
         """
 
-        # Add the input word to the lexicon when it isn't in there yet.
-        if currentWord not in self.lexicon:
-            self.lexicon[currentWord] = {nextWord: {"freq": 1}}
-            self.lexicon[currentWord][nextWord]["prob"] = 1
-            return
+        queue = collections.deque(maxlen=4)
 
-        else:
-            # Get all the next word options.
-            nextWordOptions = self.lexicon[currentWord]
+        dataset = {
+            "unigrams": {},
+            "bigrams": {},
+            "trigrams": {},
+            "4-grams": {},
+            "wordCount": 0,
+        }
 
-            # Check if the output word is among the next word options.
-            if nextWord in nextWordOptions:
-                nextWordOptions[nextWord]["freq"] += 1
-            else:
-                nextWordOptions[nextWord] = {"freq": 1}
-                nextWordOptions[nextWord]["prob"] = None
+        # Loop through all sentences
+        for sentence in sentences:
+            # Use an empty string to mark the beggining of a new sentence
+            queue.append(".")
 
-            self.lexicon[currentWord] = nextWordOptions
-            self.__calculate_probabilities(currentWord)
-            return
+            # Clean sentence text.
+            text = re.sub(r"\s\-\s|\-\-+", " ", sentence)
+            text = re.sub(r"[^\w\s\-]", " ", text)
+            text = re.sub(r"\_", r"", text)
 
-    def update(self, sentence: str) -> None:
-        """
-        Update the probability of each next word option.
+            # Split clean sentence into a list of words
+            words = text.split()
+            for word in words:
 
-        Args:
-            sentence (str): New sentence for the model to consider.
-        """
+                # Increment word count
+                dataset["wordCount"] += 1
 
-        # Clean input text.
-        text = re.sub(r"\s\-\s|\-\-+", " ", sentence)
-        text = re.sub(r"[^\w\s\-]", " ", text)
-        text = re.sub(r"\_", r"", text)
+                # Add word to queue
+                queue.append(word)
 
-        # Splitting clean text into a list of words
-        words = sentence.lower().split()
-
-        # Update values for every word in the sentence
-        for i in range(len(words) - 1):
-            currentWord = words[i]
-            nextWord = words[i + 1]
-            # Add the input word to the lexicon when it isn't in there yet.
-            if currentWord not in self.lexicon:
-                self.lexicon[currentWord] = {nextWord: {"freq": 1}}
-                self.lexicon[currentWord][nextWord]["prob"] = 1
-
-            else:
-                # Get all the next word options.
-                nextWordOptions = self.lexicon[currentWord]
-
-                # Check if the output word is among the next word options.
-                if nextWord in nextWordOptions:
-                    nextWordOptions[nextWord]["freq"] += 1
+                # Count word frequency
+                if word not in dataset["unigrams"]:
+                    dataset["unigrams"][word] = {"freq": 1}
                 else:
-                    nextWordOptions[nextWord] = {"freq": 1}
-                    nextWordOptions[nextWord]["prob"] = None
+                    dataset["unigrams"][word]["freq"] += 1
 
-                self.lexicon[currentWord] = nextWordOptions
-                self.__calculate_probabilities(currentWord)
+                # Count word pair frequency
+                if len(queue) >= 2:
+                    pair = " ".join(list(queue)[:2])
+                    if pair not in dataset["bigrams"]:
+                        dataset["bigrams"][pair] = {"freq": 1}
+                    else:
+                        dataset["bigrams"][pair]["freq"] += 1
+
+                # Count 3 word group frequency
+                if len(queue) >= 3:
+                    triad = " ".join(list(queue)[:3])
+                    if triad not in dataset["trigrams"]:
+                        dataset["trigrams"][triad] = {"freq": 1}
+                    else:
+                        dataset["trigrams"][triad]["freq"] += 1
+
+                # Count 4 word group frequency
+                if len(queue) == 4:
+                    group = " ".join(list(queue))
+                    if group not in dataset["4-grams"]:
+                        dataset["4-grams"][group] = {"freq": 1}
+                    else:
+                        dataset["4-grams"][group]["freq"] += 1
+
+        dataset["unigrams"]["."] = {"freq": len(sentences)}
+
+        # Set lexicon
+        self.lexicon = dataset
+
+        # Calculate probabilities
+        self.__calculate_probabilities()
         return
 
-    def __calculate_probabilities(self, word: str) -> None:
+    def update(self, text: str) -> None:
         """
-        Calculate the probability of each next word option.
+        Update the probability of unigrams, bigrams, trigrams and 4-grams in the lexicon.
 
         Args:
-            word (str): Word to have its next word options probabilities calculated.
+            text (str): New text for the model to consider.
         """
-        # Get the all of the next word options.
-        nextWords = self.lexicon[word]
 
-        sumOfFreqs = sum(w["freq"] for w in nextWords.values() if w)
+        # Splitting text into a list of words
+        sentences = sent_tokenize(text.lower())
 
-        # Calculate the probability of each next word option.
-        for w in nextWords.keys():
-            nextWords[w]["prob"] = nextWords[w]["freq"] / sumOfFreqs
+        queue = collections.deque(maxlen=4)
 
-        # Save probabilities to lexicon
-        self.lexicon[word] = nextWords
+        for sentence in sentences:
+            # Use an empty string to mark the beggining of a new sentence
+            queue.append(".")
+
+            # Clean sentence text.
+            text = re.sub(r"\s\-\s|\-\-+", " ", sentence)
+            text = re.sub(r"[^\w\s\-]", " ", text)
+            text = re.sub(r"\_", r"", text)
+
+            # Split clean sentence into a list of words
+            words = text.split()
+            for word in words:
+
+                # Increment word count
+                self.lexicon["wordCount"] += 1
+
+                # Add word to queue
+                queue.append(word)
+
+                # Count word frequency
+                if word not in self.lexicon["unigrams"]:
+                    self.lexicon["unigrams"][word] = {"freq": 1}
+                else:
+                    self.lexicon["unigrams"][word]["freq"] += 1
+                prob = (
+                    self.lexicon["unigrams"][word]["freq"] / self.lexicon["wordCount"]
+                )
+                self.lexicon["unigrams"][word]["prob"] = prob
+
+                # Count word pair frequency
+                if len(queue) >= 2:
+                    pair = " ".join(list(queue)[:2])
+                    if pair not in self.lexicon["bigrams"]:
+                        self.lexicon["bigrams"][pair] = {"freq": 1}
+                    else:
+                        self.lexicon["bigrams"][pair]["freq"] += 1
+                    prob = (
+                        self.lexicon["bigrams"][pair]["freq"]
+                        / self.lexicon["unigrams"][pair.split()[0]]["freq"]
+                    )
+                    self.lexicon["bigrams"][pair]["prob"] = prob
+
+                # Count 3 word group frequency
+                if len(queue) >= 3:
+                    triad = " ".join(list(queue)[:3])
+                    if triad not in self.lexicon["trigrams"]:
+                        self.lexicon["trigrams"][triad] = {"freq": 1}
+                    else:
+                        self.lexicon["trigrams"][triad]["freq"] += 1
+                    prob = (
+                        self.lexicon["trigrams"][triad]["freq"]
+                        / self.lexicon["bigrams"][" ".join(triad.split()[:2])]["freq"]
+                    )
+                    self.lexicon["trigrams"][triad]["prob"] = prob
+
+                # Count 4 word group frequency
+                if len(queue) == 4:
+                    group = " ".join(list(queue))
+                    if group not in self.lexicon["4-grams"]:
+                        self.lexicon["4-grams"][group] = {"freq": 1}
+                    else:
+                        self.lexicon["4-grams"][group]["freq"] += 1
+                    prob = (
+                        self.lexicon["4-grams"][group]["freq"]
+                        / self.lexicon["trigrams"][" ".join(group.split()[:3])]["freq"]
+                    )
+                    self.lexicon["4-grams"][group]["prob"] = prob
+
+        return
+
+    def __calculate_probabilities(self) -> None:
+        """
+        Calculate the probability of the unigrams, bigrams, trigrams and 4-grams in the lexicon.
+        """
+
+        # Calculate the probability of each unigram
+        for word in self.lexicon["unigrams"]:
+            prob = self.lexicon["unigrams"][word]["freq"] / self.lexicon["wordCount"]
+            self.lexicon["unigrams"][word]["prob"] = prob
+
+        # Calculate the probability of each bigram
+        for pair in self.lexicon["bigrams"]:
+            prob = (
+                self.lexicon["bigrams"][pair]["freq"]
+                / self.lexicon["unigrams"][pair.split()[0]]["freq"]
+            )
+            self.lexicon["bigrams"][pair]["prob"] = prob
+
+        # Calculate the probability of each trigram
+        for triad in self.lexicon["trigrams"]:
+            prob = (
+                self.lexicon["trigrams"][triad]["freq"]
+                / self.lexicon["bigrams"][" ".join(triad.split()[:2])]["freq"]
+            )
+            self.lexicon["trigrams"][triad]["prob"] = prob
+
+        # Calculate the probability of each 4-gram
+        for group in self.lexicon["4-grams"]:
+            prob = (
+                self.lexicon["4-grams"][group]["freq"]
+                / self.lexicon["trigrams"][" ".join(group.split()[:3])]["freq"]
+            )
+            self.lexicon["4-grams"][group]["prob"] = prob
+
         return
