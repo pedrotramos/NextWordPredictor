@@ -16,26 +16,9 @@ class Lexicon:
         """
         self.lexicon = data
 
-    def populate(self, input_path: str) -> None:
-        """
-        Use a dataset to populate the lexicon.
-
-        Args:
-            dataset_path (str): path to the input text file.
-        """
-        with open(input_path, "r", encoding="UTF-8") as file:
-            text = file.read().lower()
-
-        # Split the text into a list of sentences.
-        sentences = sent_tokenize(text)
-
-        # Generate the lexicon based on the input text.
-        self.generate(sentences)
-        return
-
     def generate(self, sentences: list) -> None:
         """
-        Add item to the lexicon.
+        Use a list of messages sent by the user to populate the lexicon.
 
         Args:
             sentences (list): List of sentences in the input text.

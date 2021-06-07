@@ -93,4 +93,10 @@ def predict(user_input: list, dataset: dict) -> list:
 
     # sort based on the score and select the best one
     predictions.sort(key=lambda x: x[1], reverse=True)
-    return predictions[0:3]
+    output = []
+    # Check for useless prediction
+    for pred in predictions[0:4]:
+        if pred[0] != ".":
+            output.append(pred[0])
+
+    return output[0:3]

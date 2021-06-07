@@ -37,7 +37,7 @@ if __name__ == "__main__":
         prediction = predict(words, data)
         # Print the 3 predicted options
         for i, pred in enumerate(prediction):
-            print(f"{i + 1}. {pred[0]}")
+            print(f"{i + 1}. {pred}")
         # Updating the lexicon
         lex.update(text)
         # Saving the updated lexicon
