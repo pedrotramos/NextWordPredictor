@@ -44,8 +44,33 @@ Com as frases estruturadas em N-gramas, as probabilidades delas são calculadas 
 
 ### Cálculo da probabilidade:
 
+<p  align="center">
+  <br><img src="Images/calculoN-gramas.png" width= "400"><br>
+  <c style="font-size:11px">Imagem 6: Cálculo individual das probabilidades dos N-gramas</c><br><br>
+</p>
+
+Com a base de dados em mãos o usuário pode digitar algum texto e o modelo calcula a probabilidade das possibilidades de próxima palavra utilizando interpolação e back-off. Isso é muito importante, pois suponha que fossem utilizados somente os 4-gramas para a previsão, caso uma sequência de 3 palavras não fosse encontrada na base de dados a probabilidade seria 0% para todos os casos e assim o modelo seria inútil. No nosso caso, utilizamos back-off para que quando um modelo de maior ordem falha (probabilidade 0% para tudo) utilizamos modelos de menor ordem para compensar. Além disso, utilizamos também a interpolação e assim podemos levar em consideração os modelos de unigramas, bigramas, trigramas e 4-gramas ao mesmo tempo, mas com pesos lambda diferentes.
+
+<p  align="center">
+  <br><img src="Images/interpolacao&backoff.png" width= "600"><br>
+  <c style="font-size:11px">Imagem 7: Cálculo das probabilidades utilizando backoff e interpolação</c><br><br>
+</p>
+
 ### Preditor:
 
-### Execução do programa:
+Para realizar os testes do preditor personalizado, as conversas do Thiago Verardo com sua namorada e com seu melhor amigo foram utilizadas, dado que são as maiores que ele tinha, para realizar testes bons e mais fieis. Quanto maior o número de conversas, melhor para o preditor. 
+
+Para comparar os resultados, as sugestões dadas pelo telefone foram comparadas com as sugestões do corretor. As imagens abaixo mostram os resultados.
+
+<p  align="center">
+  <br><img src="Images/wpp.png" width= "300"><br>
+  <c style="font-size:11px">Imagem 8: Sugestões do WhatsApp</c><br><br>
+  <img src="Images/programa.png" width= "500"><br>
+  <c style="font-size:11px">Imagem 9: Sugestões do preditor</c><br><br>
+</p>
+
+Em ambos os casos, pode-se ver que a palavra "amorr" e "amor" são sugeridas e, mesmo o WhatsApp tendo uma base de daodos muito maior, os resultados foram, praticamente, idênticos.
 
 ### Conclusão:
+
+Assim, podemos concluir que o modelo de n-gramas é bem simples, mas é poderoso para esse tipo de aplicação. Além disso, ele é bem rápido e leve o que o torna adequado para aplicações mobile como o teclado do smartphone. Por outro lado, imaginamos que o autocomplete do Google faça uso de técnicas mais sofisticadas como redes neurais para realizar uma tarefa bem parecida. Finalmente, o único problema que encontramos foi o fato de que essa técnica nao funciona bem para geração de frases completas e acaba gerando textos sem sentido com frequência.
