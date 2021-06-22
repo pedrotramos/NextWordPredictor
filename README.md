@@ -1,11 +1,24 @@
 # Preditor de próxima palavra
 
+**Projeto final de Processamento de Linguagem Natural**
+
+Pedro Ramos e Thiago Verardo
+
+## Abstract
+
+
+
 ## Introdução
 
-Esse projeto tem como objetivo o desenvolvimento de um preditor de próxima palavra, que analisa uma frase e retorna três opções para o usuário. O foco é desenvolver uma ferramenta única para cada pessoa, para que as previsões sejam as mais adequadas para o usuário da ferramenta.
+Esse projeto tem como objetivo o desenvolvimento de um preditor de próxima palavra, que analisa uma frase e retorna três opções para o usuário. 
+
+Ao digitar uma busca no Google, a propria barra de buscas oferece algumas sugestões de *autocomplete*. Outro exemplo é o teclado dos smartphones que conforme o usuário digita, o teclado já vai dando sempre 3 sugestões de próxima palavra. Essas interações são extremamente interessantes e cativantes, dado que é uma ferramenta utilizada pelas maiores empresas do mundo para melhorar a experiência do usuário. 
+
+Existem diversas maneiras para realizar o desenvolvimento desse projeto, porém o método mais apropriado de acordo com a literatura é o da predição de próxima palavra usando N-Gramas. Esse método utiliza conceitos básicos de PLN e existem múltiplas maneiras de abordá-lo em python. Ao que tudo indica, a biblioteca NLTK é uma das mais utilizada e os métodos do [Alexander Vlasblom](https://rstudio-pubs-static.s3.amazonaws.com/96252_bd61a0777ad44d04b619ce95ca44219c.html) são as mais indicadas.
+
+O objetivo do projeto é desenvolver uma ferramenta única para cada pessoa, completamente personalizada, para que as previsões sejam as mais adequadas para o usuário da ferramenta.
 
 ## Desenvolvimento
-
 
 ### Definição da base de dados:
 
@@ -71,6 +84,8 @@ Para comparar os resultados, as sugestões dadas pelo telefone foram comparadas 
 
 Em ambos os casos, pode-se ver que a palavra "amorr" e "amor" são sugeridas e, mesmo o WhatsApp tendo uma base de daodos muito maior, os resultados foram, praticamente, idênticos.
 
-### Conclusão:
+### Conclusão e trabalhos futuros:
 
-Assim, podemos concluir que o modelo de n-gramas é bem simples, mas é poderoso para esse tipo de aplicação. Além disso, ele é bem rápido e leve o que o torna adequado para aplicações mobile como o teclado do smartphone. Por outro lado, imaginamos que o autocomplete do Google faça uso de técnicas mais sofisticadas como redes neurais para realizar uma tarefa bem parecida. Finalmente, o único problema que encontramos foi o fato de que essa técnica nao funciona bem para geração de frases completas e acaba gerando textos sem sentido com frequência.
+Assim, podemos concluir que o modelo de n-gramas é bem simples, mas é poderoso para esse tipo de aplicação. Além disso, ele é bem rápido e leve o que o torna adequado para aplicações mobile como o teclado do smartphone. Por outro lado, imaginamos que o autocomplete do Google faça uso de técnicas mais sofisticadas como redes neurais para realizar uma tarefa bem parecida. Finalmente, o único problema que encontramos foi o fato de que essa técnica não funciona bem para geração de frases completas e acaba gerando textos sem sentido com frequência.
+
+Para futuras iterações, uma aplicação de técnicas de redes neurais para conseguir fazer a formulação de frases do zero ou sugestões de frases completas, isso tudo *linkado* a um dataset maior do que apenas o das conversas do WhatsApp.
