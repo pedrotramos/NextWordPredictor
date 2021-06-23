@@ -26,10 +26,10 @@ O objetivo do projeto é desenvolver uma ferramenta única para cada pessoa, com
 
 Primeiramente, para estruturar o projeto é necessária a escolha de uma base de dados. Essa, que será utilizada como base da estrutura de frases para a análise. Como o objetivo é criar um preditor específico para cada pessoa, a base de dados escolhida foi a da conversa do WhatsApp de cada usuário. O WhatsApp é o aplicativo de conversas mais utilizado no Brasil e ele permite que baixe sua conversa em arquivos ".txt".
 
-<div style="text-align: center; display: flex; justify-content: center; align-items: center; margin-bottom: 15px;">
-  <img src="Images/conversa1.png" width= "400" style="margin: 0 1rem">
-  <img src="Images/conversa2.png" width= "400" style="margin: 0 1rem">
-  <img src="Images/conversa3.png" width= "400" style="margin: 0 1rem">
+<div align="center">
+  <img src="Images/conversa1.png" width= "300"><br>
+  <img src="Images/conversa2.png" width= "300"><br>
+  <img src="Images/conversa3.png" width= "300">
 </div>
 <p  align="center">
   <c style="font-size:11px">Imagens 1, 2 e 3: Tutorial de como exportar uma conversa do WhatsApp</c>
