@@ -6,9 +6,9 @@ Pedro Ramos e Thiago Verardo
 
 ## Abstract
 
-A predição de próxima palavra é uma tecnologia que simplifica o processo de digitação ao sugerir próximas palavras para que o usuário selecione e, assim, economize tempo. Esse artigo oferece uma ideia de implementação de um modelo de linguagem baseado em *n-grams* e utiliza chats do Whatsapp para compor o corpus utilizado como base para o preditor. A implementação foi feita em Python e buscava replicar os resultados obtidos no teclado do *smartphone* do usuário.
+A predição de próxima palavra é uma tecnologia que simplifica o processo de digitação ao sugerir próximas palavras para que o usuário selecione e, assim, economize tempo. Esse artigo oferece, através de conceitos de processamento de linguagem natural, uma ideia de implementação de um modelo de linguagem baseado em *n-grams* e utiliza chats do Whatsapp do usuário para compor o corpus utilizado como base para o preditor. A implementação foi feita em Python e buscava replicar os resultados obtidos no teclado do *smartphone* do usuário.
 
-**Palavras-chave:** Modelo de linguagem, Corpus, N-grams.
+**Palavras-chave:** Modelo de linguagem, Corpus, N-grams, Processamento de Linguagem Natural.
 
 ## Introdução
 
@@ -27,9 +27,9 @@ O objetivo do projeto é desenvolver uma ferramenta única para cada pessoa, com
 Primeiramente, para estruturar o projeto é necessária a escolha de uma base de dados. Essa, que será utilizada como base da estrutura de frases para a análise. Como o objetivo é criar um preditor específico para cada pessoa, a base de dados escolhida foi a da conversa do WhatsApp de cada usuário. O WhatsApp é o aplicativo de conversas mais utilizado no Brasil e ele permite que baixe sua conversa em arquivos ".txt".
 
 <div style="text-align: center; display: flex; justify-content: center; align-items: center; margin-bottom: 15px;">
-  <img src="Images/conversa1.png" style="margin: 0 1rem; width: 20%; height: 20%">
-  <img src="Images/conversa2.png" style="margin: 0 1rem; width: 20%;">
-  <img src="Images/conversa3.png" style="margin: 0 1rem; width: 20%;">
+  <img src="Images/conversa1.png" width= "400" style="margin: 0 1rem">
+  <img src="Images/conversa2.png" width= "400" style="margin: 0 1rem">
+  <img src="Images/conversa3.png" width= "400" style="margin: 0 1rem">
 </div>
 <p  align="center">
   <c style="font-size:11px">Imagens 1, 2 e 3: Tutorial de como exportar uma conversa do WhatsApp</c>
